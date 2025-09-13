@@ -1,0 +1,38 @@
+[project]
+name = "haywire-api-helpers"
+version = "0.5.0"
+description = "Internal API Helpers"
+requires-python = ">=3.11"
+
+
+dependencies = [
+  "httpx >= 0.28.1, == 0.28.*",
+  "requests >= 2.32.3, == 2.32.*",
+]
+
+[tool.setuptools]
+packages = [
+  "hwireapi",
+  "hwireapi.tplink"
+]
+
+[build-system]
+requires = ["setuptools>=43.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.basedpyright]
+typeCheckingMode = "standard"
+diagnosticMode = "workspace"
+reportUnncessaryCast = "warning"
+reportUnncessaryIsInstance = "warning"
+reportUnncessaryComparison = "warning"
+reportPossiblyUnboundVariable = "error"
+reportUnboundVariable = "error"
+reportUndefinedVariable = "error"
+reportCallInDefaultInitializer = "warning"
+reportImplicitStringConcatenation = "warning"
+reportExplicitAny = false 
+reportAny = false 
+reportUnusedCoroutine = "warning"
+reportUnusedCallResult = "warning"
+reportUnusedVariable = false

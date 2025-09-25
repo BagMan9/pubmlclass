@@ -23,19 +23,20 @@ RENDER = [" ", "X", "O"]
 
 
 class GameBoard:
-    def __init__(self, entries: None | np.ndarray = None):
+    def __init__(self, size: int, entries: None | np.ndarray = None):
+        self.size = size
         self.entries = (
-            np.zeros(dtype=np.uint8, shape=(3, 3))
+            np.zeros(dtype=np.uint8, shape=(size, size + (16 if size <= 16 else 32)))
             if entries is None
             else np.array(entries, copy=True)
         )
 
     def __str__(self):
         ret = ""
-        for i in range(3):
-            space = "|".join([RENDER[x] for x in self.entries[i]])
+        for i in range(self.size):
+            space = "|".join([RENDER[self.entries[i][x]] for x in range(self.size)])
             ret = ret + space + "\n"
-            if i != len(self.entries[0]) - 1:
+            if i < self.size - 1:
                 ret = ret + "-----\n"
         return ret[:-1]
 
@@ -59,11 +60,14 @@ class GameBoard:
 
     def getmoves(self):
         return [
-            (r, c) for r in range(3) for c in range(3) if self.entries[r][c] == 0
+            (r, c)
+            for r in range(self.size)
+            for c in range(self.size)
+            if self.entries[r][c] == 0
         ]  # all possible position where the board is empty
 
     def copy(self):
-        new_board = GameBoard(self.entries)
+        new_board = GameBoard(self.size, self.entries)
         return new_board
 
 
@@ -215,7 +219,7 @@ def prompt_human(bd: GameBoard) -> tuple[int, int]:
         # FIXME: Hard coded game board length
 
         humanrow, humancol = map(int, map(str.strip, user_input.split(",")))
-        if not humanrow < len(bd.entries[0]) or not humancol < len(bd.entries[0]):
+        if not humanrow < bd.size or not humancol < bd.size:
             print("Entry does not exist on board")
             continue
         if bd.entries[humanrow][humancol] != 0:
@@ -228,7 +232,7 @@ def prompt_human(bd: GameBoard) -> tuple[int, int]:
 
 
 if __name__ == "__main__":
-    bd = GameBoard()
+    bd = GameBoard(4)
     valid_player = False
     choice = ""
     iters = input(

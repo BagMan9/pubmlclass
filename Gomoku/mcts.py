@@ -4,6 +4,9 @@ from __future__ import annotations
 import math
 import random
 from decimal import InvalidContext
+from typing import Literal
+
+import numpy as np
 
 WIN_LINES = [
     [(0, 0), (0, 1), (0, 2)],  # rows
@@ -20,9 +23,12 @@ RENDER = [" ", "X", "O"]
 
 
 class GameBoard:
-    def __init__(self):
-        self.entries = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
-        self.winl = 0
+    def __init__(self, entries: None | np.ndarray = None):
+        self.entries = (
+            np.zeros(dtype=np.uint8, shape=(3, 3))
+            if entries is None
+            else np.array(entries, copy=True)
+        )
 
     def __str__(self):
         ret = ""
@@ -44,7 +50,7 @@ class GameBoard:
             return 0
         return 3
 
-    def check_nextplayer(self, bd: list[list[int]] | None = None):
+    def check_nextplayer(self, bd: np.ndarray | None = None):
         if bd is None:
             bd = self.entries
         count_1 = sum(cc == 1 for row in bd for cc in row)
@@ -57,8 +63,7 @@ class GameBoard:
         ]  # all possible position where the board is empty
 
     def copy(self):
-        new_board = GameBoard()
-        new_board.entries = [row[:] for row in self.entries]
+        new_board = GameBoard(self.entries)
         return new_board
 
 

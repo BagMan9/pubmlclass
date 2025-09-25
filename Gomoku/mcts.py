@@ -33,17 +33,13 @@ class GameBoard:
                 ret = ret + "-----\n"
         return ret[:-1]
 
-    def checkwin(self) -> int:
-        stopped = 0
+    def checkwin(self) -> Literal[0, 1, 2, 3]:
         for line in WIN_LINES:
             vals = [self.entries[r][c] for r, c in line]
             if vals == [1, 1, 1]:
-                self.winl = stopped
                 return 1
             if vals == [2, 2, 2]:
-                self.winl = stopped
                 return 2
-            stopped += 1
         if any(0 in row for row in self.entries):
             return 0
         return 3
@@ -92,8 +88,11 @@ def apply_action(bd: GameBoard, action, player):
     return new_bd
 
 
+DEFAULT_C = math.sqrt(2)
+
+
 class MCTS:
-    def __init__(self, c=math.sqrt(2)):
+    def __init__(self, c: float | int = DEFAULT_C):
         self.c = c
 
     def uct_select(self, node: MCTSNode, c=None) -> MCTSNode:
@@ -235,7 +234,8 @@ if __name__ == "__main__":
         print(f"Using default value of {iters} iterations")
     else:
         iters = int(iters)
-    human: int = 0
+    human: Literal[1, 2] = 1
+    bot: Literal[1, 2] = 2
     while not valid_player:
         choice = input("Player X or O: ")
         if len(choice) != 1:
@@ -244,11 +244,9 @@ if __name__ == "__main__":
         if choice != "X" and choice != "O":
             continue
         valid_player = True
-    if choice == "X":
-        human = 1
-    else:
+    if choice == "O":
         human = 2
-    bot = 2 if human == 1 else 1
+        bot = 1
     print(bd)
     while bd.checkwin() == 0:
         curplayer = bd.check_nextplayer()
